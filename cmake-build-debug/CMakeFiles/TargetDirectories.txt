@@ -1,0 +1,3 @@
+C:/Users/BSHORT2/CLionProjects/ReportingGenerator/cmake-build-debug/CMakeFiles/ReportingGenerator.dir
+C:/Users/BSHORT2/CLionProjects/ReportingGenerator/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/BSHORT2/CLionProjects/ReportingGenerator/cmake-build-debug/CMakeFiles/rebuild_cache.dir
