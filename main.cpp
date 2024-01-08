@@ -16,10 +16,14 @@ struct Investment {
 void genNew() {
     std::vector<Investment> investments;
     std::vector<std::string> accounts;
+    std::vector<std::string> benchmarks;
     std::map<int, std::string> acctMap;
     std::map<int, double> acctValue;
-    std::string filePath = R"(C:\Users\BSHORT2\CLionProjects\ReportingGenerator\CurrentAccount.csv)";
-    std::string outPath = R"(C:\Users\BSHORT2\CLionProjects\ReportingGenerator\Out.csv)";
+    std::map<std::string, double> benchmarkValue;
+    std::map<std::string, std::string> benchmarkMap;
+    std::string filePath = R"(..\CurrentAccount.csv)";
+    std::string outPath = R"(..\Out.csv)";
+    double portfolioTotal = 0;
 
     std::ifstream file(filePath);
     std::string line;
@@ -42,10 +46,19 @@ void genNew() {
         investments.push_back(investment);
     }
     for (int i = 0; i < investments.size(); i++) {
+        portfolioTotal += investments[i].value;
+    }
+    for (int i = 0; i < investments.size(); i++) {
         acctMap.emplace(investments[i].accountPos, investments[i].account);
+    }
+    for (int i = 0; i < investments.size(); i++) {
+        benchmarkMap.emplace(investments[i].benchmark, investments[i].benchmark);
     }
     for (auto const& account: std::views::values(acctMap)) {
         accounts.push_back(account);
+    }
+    for (auto const& benchmark: std::views::values(benchmarkMap)) {
+        benchmarks.push_back(benchmark);
     }
     for (int i = 0; i < accounts.size(); i++) {
         double total = 0;
@@ -56,6 +69,15 @@ void genNew() {
         }
         acctValue.emplace(i,total);
     }
+    for (int i = 0; i < benchmarks.size(); i++) {
+        double total = 0;
+        for (int ii = 0; ii < investments.size(); ii++) {
+            if (investments[ii].benchmark == benchmarks[i]) {
+                total+=investments[ii].value;
+            }
+        }
+        benchmarkValue.emplace(benchmarks[i],total);
+    }
     std::ofstream csvOut(outPath);
     csvOut << "\n";
     csvOut << "," << investments[0].period << "\n";
@@ -65,6 +87,18 @@ void genNew() {
         csvOut << "," << investments[i].account << "," << investments[i].position
         << "," << std::fixed << std::setprecision(2) << investments[i].value << "," << investments[i].benchmark << ","
         << investments[i].value*100 / acctValue.find(investments[i].accountPos-1)->second << "\n";
+    }
+    csvOut.close();
+    std::ofstream csvOut2(outPath, std::ios::app);
+    csvOut2 << "\n" << "\n";
+    csvOut2 << "," << "," << "," << "," << "," << ","
+    << "," << "Consolidated:" << "\n";
+    csvOut2 << "," << "," << "," << "," << "," << ","
+    << "," << "Benchmark" << "," << "Amount" << "," << "%" << "\n";
+    for (int i = 0; i < benchmarks.size(); i++) {
+        csvOut2 << "," << "," << "," << "," << "," << ","
+     << "," << benchmarks[i] << "," << benchmarkValue.find(benchmarks[i])->second
+        << "," << std::fixed << std::setprecision(2) << benchmarkValue.find(benchmarks[i])->second*100/portfolioTotal << "\n";
     }
     std::cout << investments[0].accountPos << std::endl;
     std::cout << investments[0].account << std::endl;
