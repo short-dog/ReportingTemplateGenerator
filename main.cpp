@@ -78,7 +78,7 @@ void genNew() {
         }
         benchmarkValue.emplace(benchmarks[i],total);
     }
-    std::ofstream csvOut(outPath);
+    std::ofstream csvOut(outPath, std::ios::app);
     csvOut << "\n";
     csvOut << "," << investments[0].period << "\n";
     csvOut << "," << "Account" << "," << "Position" << "," << "Value" << ","
@@ -88,23 +88,19 @@ void genNew() {
         << "," << std::fixed << std::setprecision(2) << investments[i].value << "," << investments[i].benchmark << ","
         << investments[i].value*100 / acctValue.find(investments[i].accountPos-1)->second << "\n";
     }
-    csvOut.close();
-    std::ofstream csvOut2(outPath, std::ios::app);
-    csvOut2 << "\n" << "\n";
-    csvOut2 << "," << "," << "," << "," << "," << ","
-    << "," << "Consolidated:" << "\n";
-    csvOut2 << "," << "," << "," << "," << "," << ","
-    << "," << "Benchmark" << "," << "Amount" << "," << "%" << "\n";
+    csvOut << "\n" << "," << "Consolidated:" << "\n";
+    csvOut << "," << "Benchmark" << "," << "Amount" << "," << "%" << "\n";
     for (int i = 0; i < benchmarks.size(); i++) {
-        csvOut2 << "," << "," << "," << "," << "," << ","
-     << "," << benchmarks[i] << "," << benchmarkValue.find(benchmarks[i])->second
+        csvOut << "," << benchmarks[i] << "," << benchmarkValue.find(benchmarks[i])->second
         << "," << std::fixed << std::setprecision(2) << benchmarkValue.find(benchmarks[i])->second*100/portfolioTotal << "\n";
     }
+    csvOut.close();
     std::cout << investments[0].accountPos << std::endl;
     std::cout << investments[0].account << std::endl;
     std::cout << investments[0].position << std::endl;
     std::cout << investments[0].benchmark << std::endl;
     std::cout << investments[0].value << std::endl;
+    std::cout << std::fixed <<  portfolioTotal;
 }
 int main(){
     genNew();
